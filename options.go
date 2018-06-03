@@ -59,3 +59,9 @@ func Hook(ptr interface{}, hook HookFunction) Option {
 		k.hooks[key] = hook
 	}
 }
+
+func Resolver(r *ResolverInfo) Option {
+	return func(k *Kong) {
+		k.resolvers = append(k.resolvers, r)
+	}
+}

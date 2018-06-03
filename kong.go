@@ -39,6 +39,7 @@ type Kong struct {
 	Stderr io.Writer
 
 	hooks         map[reflect.Value]HookFunction
+	resolvers     []*ResolverInfo
 	noDefaultHelp bool
 }
 
@@ -47,10 +48,11 @@ type Kong struct {
 // See the README (https://github.com/alecthomas/kong) for usage instructions.
 func New(grammar interface{}, options ...Option) (*Kong, error) {
 	k := &Kong{
-		Exit:   os.Exit,
-		Stdout: os.Stdout,
-		Stderr: os.Stderr,
-		hooks:  map[reflect.Value]HookFunction{},
+		Exit:      os.Exit,
+		Stdout:    os.Stdout,
+		Stderr:    os.Stderr,
+		hooks:     map[reflect.Value]HookFunction{},
+		resolvers: []*ResolverInfo{},
 	}
 
 	model, err := build(grammar, k.extraFlags())
