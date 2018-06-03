@@ -60,8 +60,8 @@ func Hook(ptr interface{}, hook HookFunction) Option {
 	}
 }
 
-func Resolver(r *ResolverInfo) Option {
+func Resolver(f ResolverFunc) Option {
 	return func(k *Kong) {
-		k.resolvers = append(k.resolvers, r)
+		k.resolvers = append(k.resolvers, f)
 	}
 }

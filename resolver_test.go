@@ -4,6 +4,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"os"
 	"testing"
+	"strings"
 )
 
 type envMap map[string]string
@@ -13,7 +14,10 @@ func newEnvParser(t *testing.T, cli interface{}, env envMap) (*Kong, func()) {
 		os.Setenv(k, v)
 	}
 
-	parser := mustNew(t, cli, Resolver(EnvResolver("KONG_")))
+	r, err := EnvResolver("KONG_")
+	require.NoError(t, err)
+
+	parser := mustNew(t, cli, Resolver(r))
 
 	unsetEnvs := func() {
 		for k := range env {
@@ -71,9 +75,9 @@ func TestEnvResolverOnlyPopulateUsedBranches(t *testing.T) {
 
 	_, err := parser.Parse([]string{"visited"})
 	require.NoError(t, err)
-	require.Equal(t, 512, cli.Visited.Int)
 	require.Equal(t, 0, cli.UnvisitedArg.Int)
 	require.Equal(t, 0, cli.UnvisitedCmd.Int)
+	require.Equal(t, 512, cli.Visited.Int)
 }
 
 func TestEnvResolverTag(t *testing.T) {
@@ -86,4 +90,25 @@ func TestEnvResolverTag(t *testing.T) {
 	_, err := parser.Parse([]string{})
 	require.NoError(t, err)
 	require.Equal(t, []int{5, 2, 9}, cli.Slice)
+}
+
+func TestJsonResolverBasic(t *testing.T) {
+	var cli struct {
+		String string
+		Slice  []int
+	}
+
+	json := `{
+		"string": "🍕",
+		"slice": "5,8"
+	}`
+
+	r, err := JSONResolver(strings.NewReader(json))
+	require.NoError(t, err)
+
+	parser := mustNew(t, &cli, Resolver(r))
+	_, err = parser.Parse([]string{})
+	require.NoError(t, err)
+	require.Equal(t, "🍕", cli.String)
+	require.Equal(t, []int{5, 8}, cli.Slice)
 }

@@ -319,9 +319,9 @@ func (c *Context) Apply() (string, error) {
 				continue
 			}
 
-			s, ok := resolver.Flag(flag)
-			if !ok {
-				continue
+			s, err := resolver(flag)
+			if err != nil {
+				return "", err
 			}
 
 			fmt.Println("setting", s)

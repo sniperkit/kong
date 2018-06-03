@@ -39,7 +39,7 @@ type Kong struct {
 	Stderr io.Writer
 
 	hooks         map[reflect.Value]HookFunction
-	resolvers     []*ResolverInfo
+	resolvers     []ResolverFunc
 	noDefaultHelp bool
 }
 
@@ -52,7 +52,7 @@ func New(grammar interface{}, options ...Option) (*Kong, error) {
 		Stdout:    os.Stdout,
 		Stderr:    os.Stderr,
 		hooks:     map[reflect.Value]HookFunction{},
-		resolvers: []*ResolverInfo{},
+		resolvers: []ResolverFunc{},
 	}
 
 	model, err := build(grammar, k.extraFlags())
