@@ -6,7 +6,7 @@ import (
 )
 
 type ResolverInfo struct {
-	Flag func(flag *Flag) string
+	Flag func(flag *Flag) (string, bool)
 }
 
 //func JSONResolver(r io.Reader) *ResolverInfo {
@@ -19,26 +19,15 @@ type ResolverInfo struct {
 
 func EnvResolver(prefix string) *ResolverInfo {
 	return &ResolverInfo{
-		Flag: func(flag *Flag) string {
-			env := envString(prefix, flag)
-			return os.Getenv(env)
-
-			//ctx := DecoderContext{Value: &flag.Value}
-			//scan := Scanner{
-			//	args: []Token{{Type: FlagValueToken, Value: s}},
-			//}
-			//flag.Decoder.Decode(&ctx, &scan, flag.Value.Value)
-			//return nil
+		Flag: func(flag *Flag) (string, bool) {
+			return os.LookupEnv(envString(prefix, flag))
 		},
 	}
 }
 
 func envString(prefix string, flag *Flag) string {
-	//if flag.Tag.Has("env") {
-	//	env, ok := flag.Tag.Get("env")
-	//	if ok {
-	//		return env
-	//	}
+	//if env, ok := flag.Tag.Get("env"); ok {
+	//	return env
 	//}
 
 	env := strings.ToUpper(flag.Name)

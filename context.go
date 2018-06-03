@@ -318,11 +318,19 @@ func (c *Context) Apply() (string, error) {
 				fmt.Println("skip")
 				continue
 			}
-			s := resolver.Flag(flag)
-			flag.Value.Set
-			v := reflect.ValueOf(s)
-			flag.Parse()
-			c.scan
+
+			s, ok := resolver.Flag(flag)
+			if !ok {
+				continue
+			}
+
+			fmt.Println("setting", s)
+
+			// XXX: Supreme Hacky
+			ctx := DecoderContext{Value: &flag.Value}
+			scan := Scanner{args: []Token{{Type: FlagValueToken, Value: s}}}
+			//flag.Value.Reset()
+			flag.Decoder.Decode(&ctx, &scan, flag.Value.Value)
 		}
 	}
 
@@ -335,15 +343,6 @@ func (c *Context) Apply() (string, error) {
 	//}
 
 	return strings.Join(path, " "), nil
-}
-
-func (c *Context) applyResolvers(flags []*Flag) {
-	for _, flag := range flags {
-		fmt.Println("flag.Name", flag.Name)
-		// envresolver
-
-		// jsonresolver
-	}
 }
 
 /*
