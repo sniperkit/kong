@@ -1,11 +1,11 @@
 package kong
 
 import (
-	"os"
-	"strings"
-	"io"
 	"encoding/json"
 	"fmt"
+	"io"
+	"os"
+	"strings"
 )
 
 type ResolverFunc func(flag *Flag) (string, error)

@@ -3,8 +3,8 @@ package kong
 import (
 	"github.com/stretchr/testify/require"
 	"os"
-	"testing"
 	"strings"
+	"testing"
 )
 
 type envMap map[string]string
@@ -70,7 +70,7 @@ func TestEnvResolverOnlyPopulateUsedBranches(t *testing.T) {
 			Int int
 		} `cmd`
 	}
-	parser, unsetEnvs := newEnvParser(t, &cli, envMap{"KONG_INT": "512",})
+	parser, unsetEnvs := newEnvParser(t, &cli, envMap{"KONG_INT": "512"})
 	defer unsetEnvs()
 
 	_, err := parser.Parse([]string{"visited"})

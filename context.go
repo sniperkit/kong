@@ -313,9 +313,7 @@ func (c *Context) Apply() (string, error) {
 
 	for _, resolver := range c.App.resolvers {
 		for _, flag := range possibleFlags {
-			fmt.Println(flag)
 			if flag.Set {
-				fmt.Println("skip")
 				continue
 			}
 
@@ -324,23 +322,12 @@ func (c *Context) Apply() (string, error) {
 				return "", err
 			}
 
-			fmt.Println("setting", s)
-
 			// XXX: Supreme Hacky
 			ctx := DecoderContext{Value: &flag.Value}
 			scan := Scanner{args: []Token{{Type: FlagValueToken, Value: s}}}
-			//flag.Value.Reset()
 			flag.Decoder.Decode(&ctx, &scan, flag.Value.Value)
 		}
 	}
-
-	//for _, trace := range c.Path {
-	//	for _, resolved := range c.ResolvedValues {
-	//		if !resolved.IsSet() {
-	//			resolved.Flag.Apply(resolved.Value)
-	//		}
-	//	}
-	//}
 
 	return strings.Join(path, " "), nil
 }
